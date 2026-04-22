@@ -3,7 +3,6 @@
 from python_pptx_theme_kit import (
     Presentation,
     Inches,
-    PP_ALIGN,
     detect_overlaps,
     format_overlaps,
     make_blocks,
@@ -27,7 +26,7 @@ def main():
 
     # ── Slide 1: Hero ──────────────────────────────────────────────────────
     slide = p["blank_slide"](prs)
-    p["set_bg"](slide, palette["DARK_BG"])
+    b["slide_chrome_block"](slide, show_title_bar=False)
     b["hero_banner_block"](
         slide,
         "Write Your Amazing Title Here",
@@ -38,8 +37,12 @@ def main():
 
     # ── Slide 2: Table of Contents ─────────────────────────────────────────
     slide = p["blank_slide"](prs)
-    p["set_bg"](slide, palette["DARK_BG"])
-    p["title_bar"](slide, "Table of Contents", "Overview of slides and section structure")
+    b["slide_chrome_block"](
+        slide,
+        title="Table of Contents",
+        subtitle="Overview of slides and section structure",
+        footer_text="python-pptx-theme-kit · design patterns demo · slide 2",
+    )
     sections = [
         ("1", "Introduction & Motivation",       "Slide 1"),
         ("2", "Data Sources Overview",           "Slide 3"),
@@ -51,12 +54,15 @@ def main():
         ("8", "Summary",                         "Slide 9"),
     ]
     b["toc_list_block"](slide, sections)
-    p["footer"](slide, "python-pptx-theme-kit · design patterns demo · slide 2")
 
     # ── Slide 3: Data Sources Overview ─────────────────────────────────────
     slide = p["blank_slide"](prs)
-    p["set_bg"](slide, palette["DARK_BG"])
-    p["title_bar"](slide, "Data Sources Overview", "Three example sources with complementary attributes")
+    b["slide_chrome_block"](
+        slide,
+        title="Data Sources Overview",
+        subtitle="Three example sources with complementary attributes",
+        footer_text="python-pptx-theme-kit · design patterns demo · slide 3",
+    )
     sources = [
         ("Source A", "primary-provider/dataset-alpha", "64 000 records  ·  8 attributes", [
             ("id",          "→ id",         False),
@@ -85,12 +91,15 @@ def main():
         ]),
     ]
     b["data_source_cards_block"](slide, sources)
-    p["footer"](slide, "python-pptx-theme-kit · design patterns demo · slide 3")
 
     # ── Slide 4: Attribute Coverage Comparison ─────────────────────────────
     slide = p["blank_slide"](prs)
-    p["set_bg"](slide, palette["DARK_BG"])
-    p["title_bar"](slide, "Attribute Coverage Comparison", "Which attributes are provided by which sources?")
+    b["slide_chrome_block"](
+        slide,
+        title="Attribute Coverage Comparison",
+        subtitle="Which attributes are provided by which sources?",
+        footer_text="python-pptx-theme-kit · design patterns demo · slide 4",
+    )
     col_headers = ["Attribute", "Source A", "Source B", "Source C"]
     rows = [
         ("title", ("✓", "✓", "✓")),
@@ -112,12 +121,14 @@ def main():
         status_positive="✓",
         status_negative="-",
     )
-    p["footer"](slide, "python-pptx-theme-kit · design patterns demo · slide 4")
-
     # ── Slide 5: Architecture Pipeline ─────────────────────────────────────
     slide = p["blank_slide"](prs)
-    p["set_bg"](slide, palette["DARK_BG"])
-    p["title_bar"](slide, "Architecture & Pipeline", "Extract → Map → Normalize → Match → Merge → Output")
+    b["slide_chrome_block"](
+        slide,
+        title="Architecture & Pipeline",
+        subtitle="Extract → Map → Normalize → Match → Merge → Output",
+        footer_text="GAV integration: target schema is defined first; each source is mapped into it independently",
+    )
     stages = [
         ("EXTRACT",   "loader.py",    "Download\n& load CSVs"),
         ("MAP",       "mapping.py",   "NULL / 1:1 / 1:n\nattribute mapping"),
@@ -133,12 +144,14 @@ def main():
         "Sources are not merged all at once. A two-step pairwise approach is used:\n  Step A:  Source A  ⊕  Source B  →  Intermediate result\n  Step B:  Intermediate  ⊕  Source C  →  Final integrated dataset",
         "# main.py – orchestration\ndf_intermediate = merge(source_a, source_b)\nfinal_df        = merge(df_intermediate, source_c)\nfinal_df.sort_values('title').to_csv('output.csv', index=False)",
     )
-    p["footer"](slide, "GAV integration: target schema is defined first; each source is mapped into it independently")
-
     # ── Slide 6: Code + Metrics ─────────────────────────────────────────────
     slide = p["blank_slide"](prs)
-    p["set_bg"](slide, palette["DARK_BG"])
-    p["title_bar"](slide, "Code Example & Status Snapshot", "Full function alongside operational metrics")
+    b["slide_chrome_block"](
+        slide,
+        title="Code Example & Status Snapshot",
+        subtitle="Full function alongside operational metrics",
+        footer_text="python-pptx-theme-kit · design patterns demo · slide 6",
+    )
     b["code_status_block"](
         slide,
         "def hello_world():\n    \"\"\"Print a greeting and return it.\"\"\"\n    message = 'This slide talks about an interesting topic'\n    print(message)\n    return message\n\nif __name__ == '__main__':\n    result = hello_world()\n    print(f'Done: {result}')",
@@ -149,12 +162,14 @@ def main():
             ("Export Mode", "PowerPoint (.pptx)"),
         ],
     )
-    p["footer"](slide, "python-pptx-theme-kit · design patterns demo · slide 6")
-
     # ── Slide 7: Two-Column Analysis Frame ─────────────────────────────────
     slide = p["blank_slide"](prs)
-    p["set_bg"](slide, palette["DARK_BG"])
-    p["title_bar"](slide, "Analysis Frame", "Left: challenges, Right: solutions")
+    b["slide_chrome_block"](
+        slide,
+        title="Analysis Frame",
+        subtitle="Left: challenges, Right: solutions",
+        footer_text="python-pptx-theme-kit · design patterns demo · slide 7",
+    )
     b["two_column_panel_block"](
         slide,
         "Challenges",
@@ -172,12 +187,14 @@ def main():
             "detect_overlaps() flags layout collisions early",
         ],
     )
-    p["footer"](slide, "python-pptx-theme-kit · design patterns demo · slide 7")
-
     # ── Slide 8: Known Limitations (left-border card pattern) ──────────────
     slide = p["blank_slide"](prs)
-    p["set_bg"](slide, palette["DARK_BG"])
-    p["title_bar"](slide, "Known Limitations", "Design decisions and their trade-offs")
+    b["slide_chrome_block"](
+        slide,
+        title="Known Limitations",
+        subtitle="Design decisions and their trade-offs",
+        footer_text="python-pptx-theme-kit · design patterns demo · slide 8",
+    )
     limitations = [
         ("Fixed slide dimensions",  "All primitives assume 13.33 × 7.5 in widescreen. Changing dimensions requires recalibrating all spacing constants.",                         palette["ACCENT3"]),
         ("No auto-layout engine",   "Element positions are hand-coded in EMU/Inches. Overlaps must be detected and fixed manually or via detect_overlaps().",                    palette["ACCENT4"]),
@@ -186,12 +203,15 @@ def main():
         ("Palette coupling",        "Primitive colors are closed over at make_primitives() time. Switching palette mid-deck requires instantiating a second primitives dict.",   palette["SUBTITLE_C"]),
     ]
     b["left_border_card_list_block"](slide, limitations)
-    p["footer"](slide, "python-pptx-theme-kit · design patterns demo · slide 8")
 
     # ── Slide 9: Summary ───────────────────────────────────────────────────
     slide = p["blank_slide"](prs)
-    p["set_bg"](slide, palette["DARK_BG"])
-    p["title_bar"](slide, "Summary", "")
+    b["slide_chrome_block"](
+        slide,
+        title="Summary",
+        subtitle="",
+        footer_text="python-pptx-theme-kit · design patterns demo · slide 9",
+    )
     p["add_rect"](slide, 0, Inches(1.05), SLIDE_W, Inches(0.05), palette["ACCENT"])
     summary_items = [
         ("Palette",       "get_palette() provides a cohesive color system shared across all primitives",                        palette["ACCENT3"]),
@@ -215,9 +235,7 @@ def main():
         desc_size=12,
         alternating_bg=True,
     )
-    p["footer"](slide, "python-pptx-theme-kit · design patterns demo · slide 9")
-
-    output = "example_slide_skeleton_extensive.pptx"
+    output = "example_slide_showcase.pptx"
     prs.save(output)
     print(f"Saved: {output}  ({len(prs.slides)} slides)")
 
