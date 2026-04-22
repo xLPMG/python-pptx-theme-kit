@@ -97,17 +97,19 @@ Image support is available at the primitive layer via `add_image` with fit modes
 
 ## LLM support
 
-The library is designed to be compatible with LLM-driven code generation. The primitives and blocks are structured to be easily discoverable and composable, making it straightforward to generate new slide layouts or modify existing ones using natural language prompts.
+The library is designed to be compatible with LLM-driven code generation. 
+The primitives and blocks are structured to be easily discoverable and composable, making it straightforward to generate new slide layouts or modify existing ones using natural language prompts.
 
 The example script `discovery_of_exoplanets.py` was created by GPT-5.3-Codex using the following prompt:
 
 ```text
 Read create-ppt.txt and familiarize yourself with your task. 
 The topic of the presentation is "Discovery of Exoplanets".
-It should talk about what exoplanets are, challenges of discovery,
-the two methods we use to discover them and recent discovered
-exoplanets and their properties. You should use images if
-appropriate. In that case, ask the user to search specific
-images online based on your description and provide the file
-name under which the user should save the image for you.
+It should explain what exoplanets are, challenges of discovery
+and the two methods we use to discover exoplanets.
+It should also mention recently discovered exoplanets and
+their properties. You should use images if appropriate. 
+In that case, ask the user to search for specific images online 
+based on your description and provide the file name under which 
+the user should save the image for you.
 ```
