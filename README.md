@@ -27,6 +27,10 @@ Generated output:
 
 ## How to use in your own script
 
+> **Required slide size:** all layout constants are calibrated for a 13.33 × 7.5 inch
+> widescreen slide. You must set `slide_width` and `slide_height` as shown below;
+> other dimensions will produce misaligned layouts with no error or warning.
+
 ```python
 from python_pptx_theme_kit import Presentation, Inches, get_palette, make_primitives, make_blocks
 

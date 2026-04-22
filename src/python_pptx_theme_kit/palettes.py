@@ -97,8 +97,12 @@ def list_palettes():
 
 
 def get_palette(name="catppuccin_mocha"):
-    """Return palette dict for given name."""
+    """Return palette dict for given name.
+
+    Returns a copy of the palette so callers cannot mutate the internal
+    palette store.
+    """
     if name not in PALETTES:
         options = ", ".join(list_palettes())
         raise ValueError(f"Unknown palette '{name}'. Available: {options}")
-    return PALETTES[name]
+    return dict(PALETTES[name])

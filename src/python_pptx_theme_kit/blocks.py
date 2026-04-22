@@ -1,11 +1,14 @@
 """Higher-level layout blocks composed from primitives."""
 
+import warnings
+
 from pptx.enum.text import PP_ALIGN
 from pptx.util import Inches
 
-from .primitives import make_primitives
+from .primitives import _Namespace, make_primitives
 
 
+SLIDE_WIDTH = Inches(13.33)
 SLIDE_CONTENT_LEFT = Inches(0.35)
 SLIDE_CONTENT_WIDTH = Inches(12.6)
 
@@ -130,6 +133,12 @@ def make_blocks(palette, min_text_size=10, min_code_size=9):
         """
         if columns < 1:
             columns = 1
+        if len(sources) > columns:
+            warnings.warn(
+                f"data_source_cards_block received {len(sources)} sources but "
+                f"columns={columns}; only the first {columns} will be rendered.",
+                stacklevel=2,
+            )
 
         card_width = (width - gap * (columns - 1)) / columns
         for card_index, (name, source_id, meta, attrs) in enumerate(sources[:columns]):
@@ -284,6 +293,12 @@ def make_blocks(palette, min_text_size=10, min_code_size=9):
 
         y = top + header_height
         for row_index, (label, statuses) in enumerate(rows):
+            if len(statuses) < source_cols:
+                warnings.warn(
+                    f"coverage_table_block row '{label}' has {len(statuses)} status "
+                    f"values but {source_cols} columns expected; missing cells will be blank.",
+                    stacklevel=2,
+                )
             bg = palette["ROW_A"] if row_index % 2 == 0 else palette["ROW_B"]
             p["add_rect"](slide, left, y, width, row_height, bg)
             p["add_text"](
@@ -613,7 +628,7 @@ def make_blocks(palette, min_text_size=10, min_code_size=9):
             slide,
             0,
             band_top,
-            Inches(13.33),
+            SLIDE_WIDTH,
             band_height,
             palette["ACCENT"],
         )
@@ -748,8 +763,8 @@ def make_blocks(palette, min_text_size=10, min_code_size=9):
         )
         p["section_label"](slide, status_heading, left, Inches(4.35), Inches(6.0))
         y = Inches(4.7)
-        for label, value in status_rows:
-            p["info_row"](slide, label, value, y, lw=Inches(2.4))
+        for row_index, (label, value) in enumerate(status_rows):
+            p["info_row"](slide, label, value, y, lw=Inches(2.4), row_index=row_index)
             y += Inches(0.52)
         return y
 
@@ -850,7 +865,7 @@ def make_blocks(palette, min_text_size=10, min_code_size=9):
         if footer_text:
             p["footer"](slide, footer_text)
 
-    return {
+    return _Namespace({
         "toc_list_block": toc_list_block,
         "data_source_cards_block": data_source_cards_block,
         "coverage_table_block": coverage_table_block,
@@ -862,4 +877,4 @@ def make_blocks(palette, min_text_size=10, min_code_size=9):
         "code_status_block": code_status_block,
         "image_caption_card_block": image_caption_card_block,
         "slide_chrome_block": slide_chrome_block,
-    }
+    })

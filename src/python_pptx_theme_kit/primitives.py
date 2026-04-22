@@ -2,11 +2,34 @@
 
 import os
 
+from PIL import Image as _PILImage
 from pptx.util import Inches, Pt
 from pptx.enum.text import PP_ALIGN
 
 
 EMU_PER_POINT = 12700
+
+REQUIRED_PALETTE_KEYS = frozenset({
+    "DARK_BG", "CODE_BG", "ACCENT", "ACCENT2", "ACCENT3", "ACCENT4",
+    "WHITE", "LIGHT_GREY", "SUBTITLE_C", "CARD_BG", "ROW_A", "ROW_B",
+})
+
+
+class _Namespace(dict):
+    """Dict subclass with attribute-style access for IDE autocompletion.
+
+    Supports both ``obj["key"]`` and ``obj.key`` access patterns, making
+    primitives and blocks discoverable in IDEs and notebooks.
+    """
+
+    def __getattr__(self, key):
+        try:
+            return self[key]
+        except KeyError:
+            raise AttributeError(f"No member '{key}'") from None
+
+    def __dir__(self):
+        return sorted(self.keys())
 
 
 def make_primitives(palette, min_text_size=10, min_code_size=9):
@@ -14,11 +37,22 @@ def make_primitives(palette, min_text_size=10, min_code_size=9):
 
     Args:
         palette: Dictionary returned by ``get_palette`` with color keys used by
-            the drawing helpers.
+            the drawing helpers. Required keys: DARK_BG, CODE_BG, ACCENT,
+            ACCENT2, ACCENT3, ACCENT4, WHITE, LIGHT_GREY, SUBTITLE_C, CARD_BG,
+            ROW_A, ROW_B.
+        min_text_size: Minimum font size floor for text helpers.
+        min_code_size: Minimum font size floor for code helpers.
 
     Returns:
-        Dict[str, Callable]: Primitive helper functions for composing slides.
+        _Namespace: Primitive helper functions supporting both ``obj["key"]``
+        and ``obj.key`` access.
     """
+    missing = REQUIRED_PALETTE_KEYS - set(palette)
+    if missing:
+        raise ValueError(
+            f"Palette is missing required keys: {sorted(missing)}. "
+            f"All required keys: {sorted(REQUIRED_PALETTE_KEYS)}"
+        )
     dark_bg = palette["DARK_BG"]
     code_bg = palette["CODE_BG"]
     accent = palette["ACCENT"]
@@ -181,11 +215,9 @@ def make_primitives(palette, min_text_size=10, min_code_size=9):
         elif fit_mode == "stretch":
             pic = slide.shapes.add_picture(path, left, top, width=width, height=height)
         elif fit_mode == "cover":
+            with _PILImage.open(path) as _img:
+                image_ratio = _img.width / _img.height
             pic = slide.shapes.add_picture(path, left, top, width=width, height=height)
-            native = slide.shapes.add_picture(path, 0, 0)
-            image_ratio = native.width / native.height
-            native._element.getparent().remove(native._element)
-
             frame_ratio = width / height
             h_align = "center"
             v_align = "center"
@@ -261,6 +293,8 @@ def make_primitives(palette, min_text_size=10, min_code_size=9):
             pic.top = int(top + offset_y)
             pic.width = draw_w
             pic.height = draw_h
+        elif fit_mode == "native":
+            pic = slide.shapes.add_picture(path, left, top, width=width, height=height)
         else:
             pic = slide.shapes.add_picture(path, left, top, width=width, height=height)
 
@@ -477,6 +511,7 @@ def make_primitives(palette, min_text_size=10, min_code_size=9):
         lw=Inches(2.8),
         label_color=accent3,
         value_color=light_grey,
+        row_index=None,
     ):
         """Draw a striped key/value row used for compact metrics summaries.
 
@@ -489,11 +524,18 @@ def make_primitives(palette, min_text_size=10, min_code_size=9):
             lw: Label-column width.
             label_color: RGBColor for label text.
             value_color: RGBColor for value text.
+            row_index: Optional explicit row index controlling alternating
+                stripe color. When provided, parity is based on this value
+                rather than derived from ``y``, giving reliable results
+                regardless of the starting y-position.
 
         Returns:
             None.
         """
-        bg = row_a if int(y / Inches(0.52)) % 2 == 0 else row_b
+        if row_index is not None:
+            bg = row_a if row_index % 2 == 0 else row_b
+        else:
+            bg = row_a if int(y / Inches(0.52)) % 2 == 0 else row_b
         add_rect(slide, Inches(0.35), y, Inches(12.6), row_h, bg)
         add_text(slide, label, Inches(0.5), y + Inches(0.08),
                  lw - Inches(0.2), row_h - Inches(0.1),
@@ -516,7 +558,7 @@ def make_primitives(palette, min_text_size=10, min_code_size=9):
                  Inches(12.6), Inches(0.3), size=10,
                  italic=True, color=subtitle_c, align=PP_ALIGN.CENTER)
 
-    return {
+    return _Namespace({
         "set_bg": set_bg,
         "add_rect": add_rect,
         "add_text": add_text,
@@ -528,4 +570,4 @@ def make_primitives(palette, min_text_size=10, min_code_size=9):
         "info_row": info_row,
         "blank_slide": blank_slide,
         "footer": footer,
-    }
+    })

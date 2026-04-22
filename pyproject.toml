@@ -9,8 +9,12 @@ description = "Reusable PowerPoint theming helpers built on python-pptx."
 readme = "README.md"
 requires-python = ">=3.9"
 dependencies = [
-  "python-pptx>=1.0.0",
+  "python-pptx>=1.0.2",
+  "Pillow>=12.2.0",
 ]
+
+[project.optional-dependencies]
+dev = ["pytest>=9.0.3"]
 
 [tool.setuptools]
 package-dir = {"" = "src"}
