@@ -18,6 +18,9 @@ Generated output:
 
 ## Available palettes
 
+- `catppuccin_latte`
+- `catppuccin_frappe`
+- `catppuccin_macchiato`
 - `catppuccin_mocha`
 - `nord_frost`
 - `paper_sunrise`

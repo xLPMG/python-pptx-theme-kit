@@ -21,6 +21,9 @@ Repository features you can and should use
 1. Theme palettes
 - get_palette(name) gives a consistent color system.
 - Available palette names:
+	- catppuccin_latte
+	- catppuccin_frappe
+	- catppuccin_macchiato
 	- catppuccin_mocha
 	- nord_frost
 	- paper_sunrise
