@@ -747,6 +747,76 @@ def make_blocks(palette):
             y += Inches(0.52)
         return y
 
+    def image_caption_card_block(
+        slide,
+        image_path,
+        title,
+        caption,
+        left=SLIDE_CONTENT_LEFT,
+        top=Inches(1.15),
+        width=SLIDE_CONTENT_WIDTH,
+        height=Inches(5.9),
+        image_ratio=0.78,
+        fit="cover",
+    ):
+        """Render a card containing a framed image with title and caption.
+
+        Args:
+            slide: Target slide object.
+            image_path: Path to the image file.
+            title: Title text below image.
+            caption: Supporting caption text.
+            left: Left position of the card.
+            top: Top position of the card.
+            width: Card width.
+            height: Card height.
+            image_ratio: Fraction of card height used by image region.
+            fit: Image fit mode passed to ``add_image``.
+
+        Returns:
+            The bottom ``y`` coordinate of the card.
+        """
+        pad = Inches(0.12)
+        p["add_rect"](slide, left, top, width, height, palette["CARD_BG"], line_color=palette["ACCENT"])
+
+        image_h = (height - pad * 2) * image_ratio
+        p["add_image"](
+            slide,
+            image_path,
+            left + pad,
+            top + pad,
+            width=width - pad * 2,
+            height=image_h,
+            fit=fit,
+            border_color=palette["ACCENT"],
+        )
+
+        text_top = top + pad + image_h + Inches(0.12)
+        p["add_text"](
+            slide,
+            title,
+            left + Inches(0.18),
+            text_top,
+            width - Inches(0.36),
+            Inches(0.42),
+            size=15,
+            bold=True,
+            color=palette["ACCENT2"],
+            align=PP_ALIGN.CENTER,
+        )
+        p["add_text"](
+            slide,
+            caption,
+            left + Inches(0.18),
+            text_top + Inches(0.43),
+            width - Inches(0.36),
+            height - (text_top - top) - Inches(0.5),
+            size=12,
+            color=palette["LIGHT_GREY"],
+            align=PP_ALIGN.CENTER,
+        )
+        return top + height
+
     def slide_chrome_block(
         slide,
         title=None,
@@ -784,5 +854,6 @@ def make_blocks(palette):
         "hero_banner_block": hero_banner_block,
         "pipeline_strategy_block": pipeline_strategy_block,
         "code_status_block": code_status_block,
+        "image_caption_card_block": image_caption_card_block,
         "slide_chrome_block": slide_chrome_block,
     }

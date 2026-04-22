@@ -1,5 +1,7 @@
 """Primitive drawing helpers for python-pptx slides."""
 
+import os
+
 from pptx.util import Inches, Pt
 from pptx.enum.text import PP_ALIGN
 
@@ -125,6 +127,147 @@ def make_primitives(palette):
         r.font.italic = italic
         r.font.color.rgb = color
         return tb
+
+    def add_image(
+        slide,
+        path,
+        left,
+        top,
+        width=None,
+        height=None,
+        fit="contain",
+        align="center",
+        border_color=None,
+        border_width=None,
+    ):
+        """Add an image with configurable sizing behavior.
+
+        Supported fit modes:
+            - ``native``: Use image's native size unless width/height is given.
+            - ``contain``: Preserve aspect ratio and fit fully within frame.
+            - ``cover``: Fill frame while preserving aspect ratio via cropping.
+            - ``stretch``: Fill frame exactly (may distort aspect ratio).
+
+        Args:
+            slide: Target slide object.
+            path: Image path on disk.
+            left: Left position in EMU/Inches.
+            top: Top position in EMU/Inches.
+            width: Frame width in EMU/Inches.
+            height: Frame height in EMU/Inches.
+            fit: Image fit mode.
+            align: Alignment hint for ``contain``/``cover``.
+            border_color: Optional RGBColor border color.
+            border_width: Optional border width (Pt/EMU).
+
+        Returns:
+            The created image shape.
+        """
+        if not os.path.exists(path):
+            raise FileNotFoundError(f"Image file not found: {path}")
+
+        fit_mode = (fit or "contain").lower()
+        if fit_mode not in {"native", "contain", "cover", "stretch"}:
+            raise ValueError(f"Unsupported fit mode: {fit}")
+
+        if width is None and height is None:
+            pic = slide.shapes.add_picture(path, left, top)
+        elif width is None:
+            pic = slide.shapes.add_picture(path, left, top, height=height)
+        elif height is None:
+            pic = slide.shapes.add_picture(path, left, top, width=width)
+        elif fit_mode == "stretch":
+            pic = slide.shapes.add_picture(path, left, top, width=width, height=height)
+        elif fit_mode == "cover":
+            pic = slide.shapes.add_picture(path, left, top, width=width, height=height)
+            native = slide.shapes.add_picture(path, 0, 0)
+            image_ratio = native.width / native.height
+            native._element.getparent().remove(native._element)
+
+            frame_ratio = width / height
+            h_align = "center"
+            v_align = "center"
+            align_norm = (align or "center").lower().replace("_", "-")
+            if "left" in align_norm:
+                h_align = "left"
+            elif "right" in align_norm:
+                h_align = "right"
+            if "top" in align_norm:
+                v_align = "top"
+            elif "bottom" in align_norm:
+                v_align = "bottom"
+
+            if image_ratio > frame_ratio:
+                visible = frame_ratio / image_ratio
+                if h_align == "left":
+                    pic.crop_left = 0
+                    pic.crop_right = 1 - visible
+                elif h_align == "right":
+                    pic.crop_left = 1 - visible
+                    pic.crop_right = 0
+                else:
+                    crop = (1 - visible) / 2
+                    pic.crop_left = crop
+                    pic.crop_right = crop
+            elif image_ratio < frame_ratio:
+                visible = image_ratio / frame_ratio
+                if v_align == "top":
+                    pic.crop_top = 0
+                    pic.crop_bottom = 1 - visible
+                elif v_align == "bottom":
+                    pic.crop_top = 1 - visible
+                    pic.crop_bottom = 0
+                else:
+                    crop = (1 - visible) / 2
+                    pic.crop_top = crop
+                    pic.crop_bottom = crop
+        elif fit_mode == "contain" and width is not None and height is not None:
+            pic = slide.shapes.add_picture(path, 0, 0)
+            native_w = pic.width
+            native_h = pic.height
+            scale = min(width / native_w, height / native_h)
+            draw_w = int(native_w * scale)
+            draw_h = int(native_h * scale)
+
+            h_align = "center"
+            v_align = "center"
+            align_norm = (align or "center").lower().replace("_", "-")
+            if "left" in align_norm:
+                h_align = "left"
+            elif "right" in align_norm:
+                h_align = "right"
+            if "top" in align_norm:
+                v_align = "top"
+            elif "bottom" in align_norm:
+                v_align = "bottom"
+
+            if h_align == "left":
+                offset_x = 0
+            elif h_align == "right":
+                offset_x = width - draw_w
+            else:
+                offset_x = (width - draw_w) / 2
+
+            if v_align == "top":
+                offset_y = 0
+            elif v_align == "bottom":
+                offset_y = height - draw_h
+            else:
+                offset_y = (height - draw_h) / 2
+
+            pic.left = int(left + offset_x)
+            pic.top = int(top + offset_y)
+            pic.width = draw_w
+            pic.height = draw_h
+        else:
+            pic = slide.shapes.add_picture(path, left, top, width=width, height=height)
+
+        if border_color:
+            pic.line.color.rgb = border_color
+            if border_width:
+                pic.line.width = border_width
+
+        return pic
 
     def add_code(
         slide,
@@ -375,6 +518,7 @@ def make_primitives(palette):
         "set_bg": set_bg,
         "add_rect": add_rect,
         "add_text": add_text,
+        "add_image": add_image,
         "add_code": add_code,
         "title_bar": title_bar,
         "section_label": section_label,

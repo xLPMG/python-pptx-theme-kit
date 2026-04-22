@@ -3,6 +3,7 @@
 from python_pptx_theme_kit import (
     Presentation,
     Inches,
+    PP_ALIGN,
     detect_overlaps,
     format_overlaps,
     make_blocks,
@@ -50,8 +51,10 @@ def main():
         ("4", "Architecture & Pipeline",         "Slide 5"),
         ("5", "Code Example & Status Snapshot",  "Slide 6"),
         ("6", "Two-Column Analysis Frame",       "Slide 7"),
-        ("7", "Known Limitations",               "Slide 8"),
-        ("8", "Summary",                         "Slide 9"),
+        ("7", "Image Support Demo",              "Slide 8"),
+        ("8", "Image Fit Modes",                 "Slide 9"),
+        ("9", "Known Limitations",               "Slide 10"),
+        ("10", "Summary",                        "Slide 11"),
     ]
     b["toc_list_block"](slide, sections)
 
@@ -157,8 +160,8 @@ def main():
         "def hello_world():\n    \"\"\"Print a greeting and return it.\"\"\"\n    message = 'This slide talks about an interesting topic'\n    print(message)\n    return message\n\nif __name__ == '__main__':\n    result = hello_world()\n    print(f'Done: {result}')",
         [
             ("Theme", "catppuccin_mocha"),
-            ("Slides Built", "9"),
-            ("Primitives Used", "10 / 10"),
+            ("Slides Built", "11"),
+            ("Primitives Used", "11 / 11"),
             ("Export Mode", "PowerPoint (.pptx)"),
         ],
     )
@@ -187,13 +190,113 @@ def main():
             "detect_overlaps() flags layout collisions early",
         ],
     )
-    # ── Slide 8: Known Limitations (left-border card pattern) ──────────────
+
+    # ── Slide 8: Image Support Demo ────────────────────────────────────────
+    slide = p["blank_slide"](prs)
+    b["slide_chrome_block"](
+        slide,
+        title="Image Support Demo",
+        subtitle="Using add_image() via image_caption_card_block",
+        footer_text="python-pptx-theme-kit · design patterns demo · slide 8",
+    )
+    b["image_caption_card_block"](
+        slide,
+        "examples/jupiter.jpg",
+        "Jupiter Atmospheric Layers",
+        "Image loaded from local file and placed in a framed card using fit='cover'.\nUse fit='contain' to preserve full image without crop.",
+        height=Inches(5.5),
+        image_ratio=0.72,
+    )
+
+    # ── Slide 9: Image Fit Modes ───────────────────────────────────────────
+    slide = p["blank_slide"](prs)
+    b["slide_chrome_block"](
+        slide,
+        title="Image Fit Modes",
+        subtitle="Comparing cover, contain, stretch, and native (width-only)",
+        footer_text="python-pptx-theme-kit · design patterns demo · slide 9",
+    )
+
+    card_w = Inches(6.15)
+    card_h = Inches(2.7)
+    gap_x = Inches(0.3)
+    top_1 = Inches(1.2)
+    top_2 = Inches(4.0)
+    left_1 = Inches(0.35)
+    left_2 = left_1 + card_w + gap_x
+
+    cards = [
+        ("cover", left_1, top_1, "cover", True),
+        ("contain", left_2, top_1, "contain", True),
+        ("stretch", left_1, top_2, "stretch", True),
+        ("native", left_2, top_2, "native", False),
+    ]
+
+    for name, left, top, fit_mode, use_frame in cards:
+        p["add_rect"](slide, left, top, card_w, card_h, palette["CARD_BG"], line_color=palette["ACCENT"])
+        p["add_text"](
+            slide,
+            f"fit='{fit_mode}'",
+            left + Inches(0.12),
+            top + Inches(0.07),
+            card_w - Inches(0.24),
+            Inches(0.28),
+            size=12,
+            bold=True,
+            color=palette["ACCENT2"],
+        )
+        image_left = left + Inches(0.12)
+        image_top = top + Inches(0.42)
+        image_w = card_w - Inches(0.24)
+        image_h = Inches(1.9)
+
+        if use_frame:
+            p["add_image"](
+                slide,
+                "examples/jupiter.jpg",
+                image_left,
+                image_top,
+                width=image_w,
+                height=image_h,
+                fit=fit_mode,
+                border_color=palette["ACCENT3"],
+            )
+        else:
+            p["add_image"](
+                slide,
+                "examples/jupiter.jpg",
+                image_left,
+                image_top,
+                width=Inches(1.95),
+                fit=fit_mode,
+                border_color=palette["ACCENT3"],
+            )
+
+        desc = "fills frame with crop" if fit_mode == "cover" else (
+            "preserves full image" if fit_mode == "contain" else (
+                "forces exact frame size" if fit_mode == "stretch" else "preserves ratio from native image"
+            )
+        )
+        p["add_text"](
+            slide,
+            desc,
+            left + Inches(0.12),
+            top + Inches(2.44),
+            card_w - Inches(0.24),
+            Inches(0.24),
+            size=10,
+            italic=True,
+            color=palette["SUBTITLE_C"],
+            align=PP_ALIGN.CENTER,
+        )
+
+    # ── Slide 10: Known Limitations (left-border card pattern) ─────────────
     slide = p["blank_slide"](prs)
     b["slide_chrome_block"](
         slide,
         title="Known Limitations",
         subtitle="Design decisions and their trade-offs",
-        footer_text="python-pptx-theme-kit · design patterns demo · slide 8",
+        footer_text="python-pptx-theme-kit · design patterns demo · slide 10",
     )
     limitations = [
         ("Fixed slide dimensions",  "All primitives assume 13.33 × 7.5 in widescreen. Changing dimensions requires recalibrating all spacing constants.",                         palette["ACCENT3"]),
@@ -204,13 +307,13 @@ def main():
     ]
     b["left_border_card_list_block"](slide, limitations)
 
-    # ── Slide 9: Summary ───────────────────────────────────────────────────
+    # ── Slide 11: Summary ──────────────────────────────────────────────────
     slide = p["blank_slide"](prs)
     b["slide_chrome_block"](
         slide,
         title="Summary",
         subtitle="",
-        footer_text="python-pptx-theme-kit · design patterns demo · slide 9",
+        footer_text="python-pptx-theme-kit · design patterns demo · slide 11",
     )
     p["add_rect"](slide, 0, Inches(1.05), SLIDE_W, Inches(0.05), palette["ACCENT"])
     summary_items = [

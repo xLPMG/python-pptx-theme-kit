@@ -16,6 +16,11 @@ Generated output:
 
 - `example_slide_showcase.pptx`
 
+The showcase includes image demos:
+
+- a framed image card example
+- an image fit-mode comparison slide (`cover`, `contain`, `stretch`, `native`)
+
 ## Available palettes
 
 - `catppuccin_mocha`
@@ -73,6 +78,7 @@ Available blocks from make_blocks(palette):
 - pipeline_stages_block: horizontal process cards with connectors
 - pipeline_strategy_block: architecture strategy panel + code area
 - code_status_block: implementation code panel + status key/value rows
+- image_caption_card_block: framed image card with title and caption
 - two_column_panel_block: left/right framed analysis with bullet lists
 - left_border_card_list_block: striped left-border cards for risks/summary lists
 
@@ -83,3 +89,10 @@ All original primitives remain available via make_primitives(palette), and are u
 - one-off decorative elements
 - small spacing adjustments around a block
 - bespoke slide patterns not yet covered by make_blocks
+
+Image support is available at the primitive layer via `add_image` with fit modes:
+
+- `native`: keep native image size (or honor width/height if provided)
+- `contain`: preserve full image inside frame without crop
+- `cover`: fill frame and crop overflow while preserving aspect ratio
+- `stretch`: force image into frame dimensions (may distort)
