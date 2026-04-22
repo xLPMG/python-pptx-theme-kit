@@ -143,7 +143,7 @@ def main():
     )
     b["image_caption_card_block"](
         slide,
-        "examples/transit_light_curve.jpg",
+        "examples/images/transit_light_curve.jpg",
         "Transit Method",
         "When a planet passes in front of its star, observed brightness drops by a small and periodic amount. The dip depth estimates relative size, and repeat timing gives orbital period.",
         height=Inches(5.7),
@@ -161,7 +161,7 @@ def main():
     )
     b["image_caption_card_block"](
         slide,
-        "examples/radial_velocity_method.jpg",
+        "examples/images/radial_velocity_method.jpg",
         "Radial Velocity Method",
         "A planet and star orbit a common center of mass. The star moves toward and away from us, shifting spectral lines via the Doppler effect. This constrains minimum planet mass.",
         height=Inches(5.7),
@@ -280,7 +280,7 @@ def main():
     )
     b["image_caption_card_block"](
         slide,
-        "examples/exoplanet-artist-concept.jpg",
+        "examples/images/exoplanet-artist-concept.jpg",
         "Beyond Our Solar Neighborhood",
         "Exoplanet discovery has moved from first detections to comparative planetology. The next decade focuses on atmospheres, climate, and potential biosignatures.",
         height=Inches(5.5),

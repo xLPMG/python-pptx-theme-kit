@@ -201,7 +201,7 @@ def main():
     )
     b["image_caption_card_block"](
         slide,
-        "examples/jupiter.jpg",
+        "examples/images/jupiter.jpg",
         "Jupiter Atmospheric Layers",
         "Image loaded from local file and placed in a framed card using fit='cover'.\nUse fit='contain' to preserve full image without crop.",
         height=Inches(5.5),
@@ -253,7 +253,7 @@ def main():
         if use_frame:
             p["add_image"](
                 slide,
-                "examples/jupiter.jpg",
+                "examples/images/jupiter.jpg",
                 image_left,
                 image_top,
                 width=image_w,
@@ -264,7 +264,7 @@ def main():
         else:
             p["add_image"](
                 slide,
-                "examples/jupiter.jpg",
+                "examples/images/jupiter.jpg",
                 image_left,
                 image_top,
                 width=Inches(1.95),
