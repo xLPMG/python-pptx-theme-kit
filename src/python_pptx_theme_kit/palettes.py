@@ -50,10 +50,12 @@ PALETTES = {
 
 
 def list_palettes():
+    """Return sorted list of available palette names."""
     return sorted(PALETTES)
 
 
 def get_palette(name="catppuccin_mocha"):
+    """Return palette dict for given name."""
     if name not in PALETTES:
         options = ", ".join(list_palettes())
         raise ValueError(f"Unknown palette '{name}'. Available: {options}")

@@ -2,6 +2,14 @@
 
 
 def _bounds(shape):
+    """Return rectangular bounds for a shape.
+
+    Args:
+        shape: A python-pptx shape object.
+
+    Returns:
+        Tuple[int, int, int, int]: Bounds as ``(left, top, right, bottom)``.
+    """
     left = int(shape.left)
     top = int(shape.top)
     width = int(shape.width)
@@ -10,6 +18,16 @@ def _bounds(shape):
 
 
 def _intersection(a, b):
+    """Return the intersection rectangle of two bounds, if any.
+
+    Args:
+        a: Bounds tuple ``(left, top, right, bottom)``.
+        b: Bounds tuple ``(left, top, right, bottom)``.
+
+    Returns:
+        Optional[Tuple[int, int, int, int]]: Intersected bounds, or ``None`` if
+        rectangles do not overlap.
+    """
     left = max(a[0], b[0])
     top = max(a[1], b[1])
     right = min(a[2], b[2])
@@ -20,10 +38,27 @@ def _intersection(a, b):
 
 
 def _area(bounds):
+    """Compute area of a bounds tuple.
+
+    Args:
+        bounds: Bounds tuple ``(left, top, right, bottom)``.
+
+    Returns:
+        int: Non-negative area.
+    """
     return max(0, bounds[2] - bounds[0]) * max(0, bounds[3] - bounds[1])
 
 
 def _contains(outer, inner):
+    """Check whether one bounds rectangle fully contains another.
+
+    Args:
+        outer: Candidate container bounds tuple.
+        inner: Candidate contained bounds tuple.
+
+    Returns:
+        bool: True when ``outer`` fully contains ``inner``.
+    """
     return (
         outer[0] <= inner[0]
         and outer[1] <= inner[1]
@@ -43,6 +78,16 @@ def detect_slide_overlaps(
 
     Each entry contains shape names, overlap area, and overlap ratios.
     Ratios are computed against each shape area to make it easy to tune noise.
+
+    Args:
+        slide: Slide whose shapes should be analyzed.
+        slide_number: 1-based slide number used in output entries.
+        min_overlap_ratio: Minimum overlap ratio required to report a finding.
+        ignore_full_containment: Whether to suppress near-fully-contained pairs.
+        containment_ratio: Ratio threshold used with containment suppression.
+
+    Returns:
+        List[dict]: Overlap findings for the slide.
     """
     entries = []
     shapes = list(slide.shapes)
@@ -99,7 +144,17 @@ def detect_overlaps(
     ignore_full_containment=True,
     containment_ratio=0.98,
 ):
-    """Return overlap entries across all slides in a presentation."""
+    """Return overlap entries across all slides in a presentation.
+
+    Args:
+        presentation: python-pptx ``Presentation`` object.
+        min_overlap_ratio: Minimum overlap ratio required to report a finding.
+        ignore_full_containment: Whether to suppress near-fully-contained pairs.
+        containment_ratio: Ratio threshold used with containment suppression.
+
+    Returns:
+        List[dict]: Aggregated overlap findings across all slides.
+    """
     findings = []
     for idx, slide in enumerate(presentation.slides, start=1):
         findings.extend(
@@ -115,7 +170,14 @@ def detect_overlaps(
 
 
 def format_overlaps(findings):
-    """Format overlap findings into human-readable lines."""
+    """Format overlap findings into human-readable lines.
+
+    Args:
+        findings: Iterable of overlap dict entries from ``detect_overlaps``.
+
+    Returns:
+        List[str]: Human-readable overlap summary lines.
+    """
     lines = []
     for f in findings:
         lines.append(

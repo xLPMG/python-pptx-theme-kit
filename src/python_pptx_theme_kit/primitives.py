@@ -8,6 +8,15 @@ EMU_PER_POINT = 12700
 
 
 def make_primitives(palette):
+    """Build and return a dictionary of themed slide helper primitives.
+
+    Args:
+        palette: Dictionary returned by ``get_palette`` with color keys used by
+            the drawing helpers.
+
+    Returns:
+        Dict[str, Callable]: Primitive helper functions for composing slides.
+    """
     dark_bg = palette["DARK_BG"]
     code_bg = palette["CODE_BG"]
     accent = palette["ACCENT"]
@@ -22,12 +31,44 @@ def make_primitives(palette):
     slide_w = Inches(13.33)
 
     def set_bg(slide, color):
+        """Set a solid background color on a slide.
+
+        Args:
+            slide: Target slide object.
+            color: RGBColor value for the background.
+
+        Returns:
+            None.
+        """
         fill = slide.background.fill
         fill.solid()
         fill.fore_color.rgb = color
 
-    def add_rect(slide, left, top, width, height, fill_color,
-                 line_color=None, line_width=None):
+    def add_rect(
+        slide,
+        left,
+        top,
+        width,
+        height,
+        fill_color,
+        line_color=None,
+        line_width=None,
+    ):
+        """Add a filled rectangle with an optional border.
+
+        Args:
+            slide: Target slide object.
+            left: Left position in EMU/Inches.
+            top: Top position in EMU/Inches.
+            width: Rectangle width in EMU/Inches.
+            height: Rectangle height in EMU/Inches.
+            fill_color: RGBColor value for rectangle fill.
+            line_color: Optional RGBColor border color.
+            line_width: Optional border width (Pt/EMU).
+
+        Returns:
+            The created rectangle shape.
+        """
         shape = slide.shapes.add_shape(1, left, top, width, height)
         shape.fill.solid()
         shape.fill.fore_color.rgb = fill_color
@@ -39,9 +80,39 @@ def make_primitives(palette):
             shape.line.fill.background()
         return shape
 
-    def add_text(slide, text, left, top, width, height,
-                 size=14, bold=False, italic=False,
-                 color=white, align=PP_ALIGN.LEFT, wrap=True):
+    def add_text(
+        slide,
+        text,
+        left,
+        top,
+        width,
+        height,
+        size=14,
+        bold=False,
+        italic=False,
+        color=white,
+        align=PP_ALIGN.LEFT,
+        wrap=True,
+    ):
+        """Add a text box with one formatted run.
+
+        Args:
+            slide: Target slide object.
+            text: Text content to render.
+            left: Left position in EMU/Inches.
+            top: Top position in EMU/Inches.
+            width: Text box width in EMU/Inches.
+            height: Text box height in EMU/Inches.
+            size: Font size in points.
+            bold: Whether text is bold.
+            italic: Whether text is italic.
+            color: RGBColor value for font color.
+            align: Paragraph alignment from PP_ALIGN.
+            wrap: Whether to enable word wrapping.
+
+        Returns:
+            The created text box shape.
+        """
         tb = slide.shapes.add_textbox(left, top, width, height)
         tf = tb.text_frame
         tf.word_wrap = wrap
@@ -67,6 +138,28 @@ def make_primitives(palette):
         wrap=False,
         truncate=True,
     ):
+        """Add a code panel with auto-fit font sizing and optional truncation.
+
+        The function draws a themed code container, then inserts code lines into
+        an inner text box. Font size is reduced down to ``min_size`` when needed
+        to fit vertically. If lines still do not fit and ``truncate`` is True,
+        remaining lines are dropped and the final rendered line gets ``...``.
+
+        Args:
+            slide: Target slide object.
+            code: Multi-line code string to render.
+            left: Left position in EMU/Inches.
+            top: Top position in EMU/Inches.
+            width: Code panel width in EMU/Inches.
+            height: Code panel height in EMU/Inches.
+            size: Preferred font size in points.
+            min_size: Minimum font size allowed during fit.
+            wrap: Whether to enable word wrapping in code text.
+            truncate: Whether to truncate lines that exceed vertical space.
+
+        Returns:
+            None.
+        """
         add_rect(slide, left, top, width, height, code_bg, accent, Pt(1))
         tb = slide.shapes.add_textbox(
             left + Inches(0.15), top + Inches(0.1),
@@ -112,9 +205,33 @@ def make_primitives(palette):
             r.font.color.rgb = code_fg
 
     def blank_slide(prs):
+        """Create a blank layout slide (layout index 6).
+
+        Args:
+            prs: Presentation object.
+
+        Returns:
+            The newly created slide.
+        """
         return prs.slides.add_slide(prs.slide_layouts[6])
 
-    def title_bar(slide, title, subtitle="", bar_height=Inches(1.05)):
+    def title_bar(
+        slide,
+        title,
+        subtitle="",
+        bar_height=Inches(1.05),
+    ):
+        """Draw a full-width top bar with a title and optional subtitle.
+
+        Args:
+            slide: Target slide object.
+            title: Main title text.
+            subtitle: Optional subtitle text.
+            bar_height: Height of the title bar.
+
+        Returns:
+            None.
+        """
         add_rect(slide, 0, 0, slide_w, bar_height, accent)
         add_text(slide, title, Inches(0.35), Inches(0.1),
                  Inches(12.6), Inches(0.58), size=26, bold=True,
@@ -135,6 +252,22 @@ def make_primitives(palette):
         color=accent,
         align=PP_ALIGN.LEFT,
     ):
+        """Add a bold section label scoped to the provided rectangular region.
+
+        Args:
+            slide: Target slide object.
+            text: Label text.
+            left: Left position in EMU/Inches.
+            top: Top position in EMU/Inches.
+            width: Label width in EMU/Inches.
+            height: Label height in EMU/Inches.
+            size: Font size in points.
+            color: RGBColor value for font color.
+            align: Paragraph alignment from PP_ALIGN.
+
+        Returns:
+            None.
+        """
         add_text(
             slide,
             text,
@@ -148,8 +281,33 @@ def make_primitives(palette):
             align=align,
         )
 
-    def bullet_block(slide, items, left, top, width, height,
-                     size=13, color=light_grey, bullet="•"):
+    def bullet_block(
+        slide,
+        items,
+        left,
+        top,
+        width,
+        height,
+        size=13,
+        color=light_grey,
+        bullet="•",
+    ):
+        """Render a vertical bullet list inside a text box.
+
+        Args:
+            slide: Target slide object.
+            items: Iterable of bullet item strings.
+            left: Left position in EMU/Inches.
+            top: Top position in EMU/Inches.
+            width: Text box width in EMU/Inches.
+            height: Text box height in EMU/Inches.
+            size: Font size in points.
+            color: RGBColor value for font color.
+            bullet: Bullet marker prefix.
+
+        Returns:
+            None.
+        """
         tb = slide.shapes.add_textbox(left, top, width, height)
         tf = tb.text_frame
         tf.word_wrap = True
@@ -165,9 +323,31 @@ def make_primitives(palette):
             r.font.size = Pt(size)
             r.font.color.rgb = color
 
-    def info_row(slide, label, value, y, row_h=Inches(0.52),
-                 lw=Inches(2.8), label_color=accent3,
-                 value_color=light_grey):
+    def info_row(
+        slide,
+        label,
+        value,
+        y,
+        row_h=Inches(0.52),
+        lw=Inches(2.8),
+        label_color=accent3,
+        value_color=light_grey,
+    ):
+        """Draw a striped key/value row used for compact metrics summaries.
+
+        Args:
+            slide: Target slide object.
+            label: Left-column label text.
+            value: Right-column value text.
+            y: Vertical position of the row.
+            row_h: Row height.
+            lw: Label-column width.
+            label_color: RGBColor for label text.
+            value_color: RGBColor for value text.
+
+        Returns:
+            None.
+        """
         bg = row_a if int(y / Inches(0.52)) % 2 == 0 else row_b
         add_rect(slide, Inches(0.35), y, Inches(12.6), row_h, bg)
         add_text(slide, label, Inches(0.5), y + Inches(0.08),
@@ -178,6 +358,15 @@ def make_primitives(palette):
                  size=12, color=value_color)
 
     def footer(slide, text):
+        """Add centered footer text at the bottom of the slide.
+
+        Args:
+            slide: Target slide object.
+            text: Footer text content.
+
+        Returns:
+            None.
+        """
         add_text(slide, text, Inches(0.35), Inches(7.1),
                  Inches(12.6), Inches(0.3), size=10,
                  italic=True, color=subtitle_c, align=PP_ALIGN.CENTER)
