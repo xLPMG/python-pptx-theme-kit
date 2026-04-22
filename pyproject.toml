@@ -7,10 +7,15 @@ name = "python-pptx-theme-kit"
 version = "0.1.0"
 description = "Reusable PowerPoint theming helpers built on python-pptx."
 readme = "README.md"
+authors = [{name = "Luca-Philipp Grumbach"}]
+license = "GPL-3.0-only"
 requires-python = ">=3.9"
 dependencies = [
   "python-pptx>=1.0.2",
   "Pillow>=12.2.0",
+]
+classifiers = [
+  "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
 ]
 
 [project.optional-dependencies]
