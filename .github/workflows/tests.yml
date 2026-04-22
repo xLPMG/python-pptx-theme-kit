@@ -4,6 +4,12 @@ on: [push, pull_request]
 
 jobs:
   test:
+    if: >
+      ${{
+        !contains(join(github.event.commits.*.message, ' '), '[skip ci]') &&
+        !contains(github.event.pull_request.title || '', '[skip ci]') &&
+        !contains(github.event.pull_request.body || '', '[skip ci]')
+      }}
     name: Python ${{ matrix.python-version }}
     runs-on: ubuntu-latest
 

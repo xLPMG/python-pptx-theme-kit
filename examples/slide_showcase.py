@@ -106,15 +106,15 @@ def main():
     col_headers = ["Attribute", "Source A", "Source B", "Source C"]
     rows = [
         ("title", ("✓", "✓", "✓")),
-        ("platform", ("✓", "✓", "-")),
+        ("platform", ("✓", "✓", "✗")),
         ("date", ("✓", "✓", "✓")),
-        ("developer", ("-", "-", "✓")),
-        ("publisher", ("✓", "-", "✓")),
-        ("category", ("✓", "-", "✓")),
-        ("score", ("✓", "-", "-")),
-        ("user_score", ("-", "✓", "-")),
-        ("rating", ("-", "-", "✓")),
-        ("summary", ("-", "✓", "-")),
+        ("developer", ("✗", "✗", "✓")),
+        ("publisher", ("✓", "✗", "✓")),
+        ("category", ("✓", "✗", "✓")),
+        ("score", ("✓", "✗", "✗")),
+        ("user_score", ("✗", "✓", "✗")),
+        ("rating", ("✗", "✗", "✓")),
+        ("summary", ("✗", "✓", "✗")),
     ]
     b["coverage_table_block"](
         slide,

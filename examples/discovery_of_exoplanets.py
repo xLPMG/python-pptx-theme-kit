@@ -181,16 +181,16 @@ def main():
         slide,
         ["Capability", "Transit", "Radial Velocity"],
         [
-            ("Planet radius estimate", ("✓", "-")),
-            ("Minimum mass estimate", ("-", "✓")),
+            ("Planet radius estimate", ("✓", "✗")),
+            ("Minimum mass estimate", ("✗", "✓")),
             ("Orbital period", ("✓", "✓")),
-            ("Atmosphere follow-up potential", ("✓", "-")),
-            ("Sensitive to face-on orbits", ("-", "✓")),
-            ("High false-positive risk alone", ("✓", "-")),
+            ("Atmosphere follow-up potential", ("✓", "✗")),
+            ("Sensitive to face-on orbits", ("✗", "✓")),
+            ("High false-positive risk alone", ("✓", "✗")),
         ],
         insight_text="Combining both methods yields planet density (mass + radius), a key clue to composition.",
         status_positive="✓",
-        status_negative="-",
+        status_negative="✗",
     )
 
     # Slide 8: Pipeline
