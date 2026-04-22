@@ -1,0 +1,89 @@
+You are an LLM tasked with creating a PowerPoint presentation script in this repository.
+
+Your output should be Python code that uses the local toolkit in src/python_pptx_theme_kit, not raw ad-hoc python-pptx calls for everything.
+
+Use these imports:
+
+from python_pptx_theme_kit import (
+		Presentation,
+		Inches,
+		PP_ALIGN,
+		get_palette,
+		list_palettes,
+		make_primitives,
+		detect_overlaps,
+		format_overlaps,
+)
+
+Repository features you can and should use
+
+1. Theme palettes
+- get_palette(name) gives a consistent color system.
+- Available palette names:
+	- catppuccin_mocha
+	- nord_frost
+	- paper_sunrise
+
+2. Primitive builder
+- p = make_primitives(palette)
+- p is a dict with these helpers:
+	- p["blank_slide"](prs)
+	- p["set_bg"](slide, color)
+	- p["add_rect"](slide, left, top, width, height, fill_color, line_color=None, line_width=None)
+	- p["add_text"](slide, text, left, top, width, height, size=14, bold=False, italic=False, color=..., align=PP_ALIGN.LEFT, wrap=True)
+	- p["add_code"](slide, code, left, top, width, height, size=10, min_size=8, wrap=False, truncate=True)
+	- p["title_bar"](slide, title, subtitle="", bar_height=Inches(1.05))
+	- p["section_label"](slide, text, left, top, width, height=Inches(0.3), size=13, color=..., align=PP_ALIGN.LEFT)
+	- p["bullet_block"](slide, items, left, top, width, height, size=13, color=..., bullet="•")
+	- p["info_row"](slide, label, value, y, row_h=Inches(0.52), lw=Inches(2.8), label_color=..., value_color=...)
+	- p["footer"](slide, text)
+
+3. Overlap quality check
+- detect_overlaps(prs, min_overlap_ratio=0.01, ignore_full_containment=True, containment_ratio=0.98)
+- format_overlaps(findings)
+- Use this at the end of generation and print warnings if overlaps are found.
+
+Required slide setup
+
+- Create a Presentation() and set:
+	- prs.slide_width = Inches(13.33)
+	- prs.slide_height = Inches(7.5)
+
+Design and layout rules
+
+- Create a multi-slide deck (at least 5 slides unless user requests fewer).
+- Maintain visual consistency with one selected palette.
+- Use title_bar on most slides for a coherent structure.
+- Use section_label for scoped regions (columns/cards), not full-width assumptions.
+- Mix primitives across deck:
+	- narrative text blocks
+	- bullet lists
+	- code blocks
+	- key-value rows
+	- decorative rectangles/cards
+- Keep readable spacing and avoid crowding.
+- Prefer p["add_code"] with wrap=True for long lines.
+- Do not place multiple large text boxes on top of each other.
+
+Output requirements
+
+- Provide complete runnable Python code, including:
+	- imports
+	- main() function
+	- slide construction
+	- save call
+	- overlap check output
+	- if __name__ == "__main__": main()
+- Save to a descriptive file name, for example:
+	- generated_deck.pptx
+- Print the saved filename.
+- After saving, run overlap detection and print either:
+	- "No significant overlaps detected."
+	- or a bullet list of overlap lines from format_overlaps.
+
+Style goals
+
+- Build slides that look intentional and modern.
+- Use hierarchy: title, subtitle/context, body, footer.
+- Balance dense slides with simpler visual slides.
+- Ensure generated content feels polished and presentation-ready.

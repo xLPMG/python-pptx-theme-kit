@@ -4,6 +4,9 @@ from pptx.util import Inches, Pt
 from pptx.enum.text import PP_ALIGN
 
 
+EMU_PER_POINT = 12700
+
+
 def make_primitives(palette):
     dark_bg = palette["DARK_BG"]
     code_bg = palette["CODE_BG"]
@@ -52,15 +55,50 @@ def make_primitives(palette):
         r.font.color.rgb = color
         return tb
 
-    def add_code(slide, code, left, top, width, height, size=10):
+    def add_code(
+        slide,
+        code,
+        left,
+        top,
+        width,
+        height,
+        size=10,
+        min_size=8,
+        wrap=False,
+        truncate=True,
+    ):
         add_rect(slide, left, top, width, height, code_bg, accent, Pt(1))
         tb = slide.shapes.add_textbox(
             left + Inches(0.15), top + Inches(0.1),
             width - Inches(0.3), height - Inches(0.2))
         tf = tb.text_frame
-        tf.word_wrap = False
+        tf.word_wrap = wrap
+
+        lines = code.split("\n")
+        if not lines:
+            lines = [""]
+
+        available_h = int(height - Inches(0.2))
+        max_size = int(size)
+        min_size = int(min_size)
+        line_spacing = 1.35
+        fit_size = max_size
+
+        while fit_size > min_size:
+            required_h = int(len(lines) * fit_size * line_spacing * EMU_PER_POINT)
+            if required_h <= available_h:
+                break
+            fit_size -= 1
+
+        max_lines = int(available_h / (fit_size * line_spacing * EMU_PER_POINT))
+        if max_lines < 1:
+            max_lines = 1
+        if truncate and len(lines) > max_lines:
+            lines = lines[:max_lines]
+            lines[-1] = f"{lines[-1]} ..."
+
         first = True
-        for line in code.split("\n"):
+        for line in lines:
             if first:
                 p = tf.paragraphs[0]
                 first = False
@@ -69,7 +107,7 @@ def make_primitives(palette):
             p.alignment = PP_ALIGN.LEFT
             r = p.add_run()
             r.text = line
-            r.font.size = Pt(size)
+            r.font.size = Pt(fit_size)
             r.font.name = "Courier New"
             r.font.color.rgb = code_fg
 
@@ -86,9 +124,29 @@ def make_primitives(palette):
                      Inches(12.6), Inches(0.32), size=13,
                      italic=True, color=dark_bg)
 
-    def section_label(slide, text, y):
-        add_text(slide, text, Inches(0.35), y, Inches(12.6), Inches(0.3),
-                 size=13, bold=True, color=accent)
+    def section_label(
+        slide,
+        text,
+        left,
+        top,
+        width,
+        height=Inches(0.3),
+        size=13,
+        color=accent,
+        align=PP_ALIGN.LEFT,
+    ):
+        add_text(
+            slide,
+            text,
+            left,
+            top,
+            width,
+            height,
+            size=size,
+            bold=True,
+            color=color,
+            align=align,
+        )
 
     def bullet_block(slide, items, left, top, width, height,
                      size=13, color=light_grey, bullet="•"):

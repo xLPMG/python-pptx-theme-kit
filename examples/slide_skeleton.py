@@ -37,7 +37,7 @@ def main():
     )
     p["title_bar"](
         slide,
-        "Write your amazign title here",
+        "Write your amazing title here",
         "A stylish multi-slide demo deck powered by reusable primitives",
     )
     p["add_text"](
@@ -45,7 +45,7 @@ def main():
         "This slide talks about an interesting topic",
         Inches(0.8),
         Inches(1.6),
-        Inches(7.8),
+        Inches(6.9),
         Inches(0.8),
         size=24,
         bold=True,
@@ -56,7 +56,7 @@ def main():
         "Built with layered panels, accents, and reusable structures.",
         Inches(0.8),
         Inches(2.4),
-        Inches(7.8),
+        Inches(6.9),
         Inches(0.6),
         size=14,
         italic=True,
@@ -65,11 +65,12 @@ def main():
     p["add_code"](
         slide,
         "def hello_world():\n    print('Hello world from slide code!')",
-        Inches(8.6),
+        Inches(8.0),
         Inches(1.55),
-        Inches(3.9),
+        Inches(4.6),
         Inches(2.1),
         size=12,
+        wrap=True,
     )
     p["footer"](slide, "python-pptx-theme-kit · extensive sample deck · slide 1")
 
@@ -77,7 +78,7 @@ def main():
     slide = p["blank_slide"](prs)
     p["set_bg"](slide, palette["DARK_BG"])
     p["title_bar"](slide, "Agenda", "Fast walkthrough of a cool visual narrative")
-    p["section_label"](slide, "What We Cover", Inches(1.25))
+    p["section_label"](slide, "What We Cover", Inches(0.6), Inches(1.25), Inches(6.0))
     p["bullet_block"](
         slide,
         [
@@ -128,7 +129,7 @@ def main():
     slide = p["blank_slide"](prs)
     p["set_bg"](slide, palette["DARK_BG"])
     p["title_bar"](slide, "Code And KPIs", "Narrative on the left, operational summary on the right")
-    p["section_label"](slide, "Code Example", Inches(1.25))
+    p["section_label"](slide, "Code Example", Inches(0.6), Inches(1.25), Inches(6.0))
     p["add_code"](
         slide,
         "def hello_world():\n"
@@ -142,8 +143,9 @@ def main():
         Inches(12.2),
         Inches(2.25),
         size=12,
+        wrap=True,
     )
-    p["section_label"](slide, "Status Snapshot", Inches(4.1))
+    p["section_label"](slide, "Status Snapshot", Inches(0.6), Inches(4.1), Inches(6.0))
     p["info_row"](slide, "Theme", "catppuccin_mocha", Inches(4.45), lw=Inches(2.4))
     p["info_row"](slide, "Slides Built", "5", Inches(4.97), lw=Inches(2.4))
     p["info_row"](slide, "Primitives Used", "10 / 10", Inches(5.49), lw=Inches(2.4))
@@ -184,7 +186,17 @@ def main():
         palette["ROW_B"],
         line_color=palette["ACCENT2"],
     )
-    p["section_label"](slide, "Left: Problem", Inches(1.55))
+    p["add_text"](
+        slide,
+        "Left: Problem",
+        Inches(0.95),
+        Inches(1.58),
+        Inches(5.1),
+        Inches(0.35),
+        size=13,
+        bold=True,
+        color=palette["ACCENT"],
+    )
     p["bullet_block"](
         slide,
         [
@@ -199,7 +211,17 @@ def main():
         size=13,
         color=palette["LIGHT_GREY"],
     )
-    p["section_label"](slide, "Right: Approach", Inches(1.55))
+    p["add_text"](
+        slide,
+        "Right: Approach",
+        Inches(7.1),
+        Inches(1.58),
+        Inches(5.1),
+        Inches(0.35),
+        size=13,
+        bold=True,
+        color=palette["ACCENT2"],
+    )
     p["bullet_block"](
         slide,
         [
@@ -220,14 +242,14 @@ def main():
     slide = p["blank_slide"](prs)
     p["set_bg"](slide, palette["DARK_BG"])
     p["title_bar"](slide, "Closing", "Reusable slides with strong defaults and creative headroom")
-    p["section_label"](slide, "Final Checklist", Inches(1.35))
+    p["section_label"](slide, "Final Checklist", Inches(0.35), Inches(1.35), Inches(6.0))
     p["info_row"](slide, "Reusable Theme", "Enabled", Inches(1.7), lw=Inches(3.2))
     p["info_row"](slide, "Narrative Blocks", "Enabled", Inches(2.22), lw=Inches(3.2))
     p["info_row"](slide, "Code Rendering", "Enabled", Inches(2.74), lw=Inches(3.2))
     p["info_row"](slide, "Data Rows", "Enabled", Inches(3.26), lw=Inches(3.2))
     p["add_text"](
         slide,
-        "Write your amazign title here",
+        "Write your amazing title here",
         Inches(0.7),
         Inches(4.35),
         Inches(12.0),
