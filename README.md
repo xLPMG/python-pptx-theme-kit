@@ -16,11 +16,6 @@ Generated output:
 
 - `example_slide_showcase.pptx`
 
-The showcase includes image demos:
-
-- a framed image card example
-- an image fit-mode comparison slide (`cover`, `contain`, `stretch`, `native`)
-
 ## Available palettes
 
 - `catppuccin_mocha`
