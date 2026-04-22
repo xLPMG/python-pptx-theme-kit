@@ -10,16 +10,22 @@ SLIDE_CONTENT_LEFT = Inches(0.35)
 SLIDE_CONTENT_WIDTH = Inches(12.6)
 
 
-def make_blocks(palette):
+def make_blocks(palette, min_text_size=10, min_code_size=9):
     """Build and return reusable composition blocks.
 
     Args:
         palette: Dictionary returned by ``get_palette``.
+        min_text_size: Minimum font size floor applied by primitive text helpers.
+        min_code_size: Minimum font size floor applied by primitive code helpers.
 
     Returns:
         Dict[str, Callable]: Prepared layout block helpers.
     """
-    p = make_primitives(palette)
+    p = make_primitives(
+        palette,
+        min_text_size=min_text_size,
+        min_code_size=min_code_size,
+    )
 
     def toc_list_block(
         slide,

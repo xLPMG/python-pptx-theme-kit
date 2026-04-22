@@ -127,3 +127,7 @@ Style goals
 - Use hierarchy: title, subtitle/context, body, footer.
 - Balance dense slides with simpler visual slides.
 - Ensure generated content feels polished and presentation-ready.
+
+Example
+
+For an extensive example, view examples/slide_showcase.py

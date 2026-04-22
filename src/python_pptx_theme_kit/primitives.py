@@ -9,7 +9,7 @@ from pptx.enum.text import PP_ALIGN
 EMU_PER_POINT = 12700
 
 
-def make_primitives(palette):
+def make_primitives(palette, min_text_size=10, min_code_size=9):
     """Build and return a dictionary of themed slide helper primitives.
 
     Args:
@@ -31,6 +31,8 @@ def make_primitives(palette):
     row_b = palette["ROW_B"]
 
     slide_w = Inches(13.33)
+    min_text_size = int(min_text_size)
+    min_code_size = int(min_code_size)
 
     def set_bg(slide, color):
         """Set a solid background color on a slide.
@@ -122,7 +124,7 @@ def make_primitives(palette):
         p.alignment = align
         r = p.add_run()
         r.text = text
-        r.font.size = Pt(size)
+        r.font.size = Pt(max(int(size), min_text_size))
         r.font.bold = bold
         r.font.italic = italic
         r.font.color.rgb = color
@@ -315,8 +317,8 @@ def make_primitives(palette):
             lines = [""]
 
         available_h = int(height - Inches(0.2))
-        max_size = int(size)
-        min_size = int(min_size)
+        max_size = max(int(size), min_code_size)
+        min_size = max(int(min_size), min_code_size)
         line_spacing = 1.35
         fit_size = max_size
 
