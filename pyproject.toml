@@ -14,9 +14,6 @@ dependencies = [
   "python-pptx>=1.0.2",
   "Pillow>=12.2.0",
 ]
-classifiers = [
-  "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
-]
 
 [project.optional-dependencies]
 dev = ["pytest>=9.0.3"]
